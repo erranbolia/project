@@ -27,7 +27,7 @@ void loop()
   cm = microsecondsToCentimeters(duration);
 
 
- while(cm>10)
+ while(cm>150)
  {
   pinMode(Trigger, OUTPUT);
   digitalWrite(Trigger, LOW);
@@ -56,7 +56,7 @@ void loop()
   }
   
 
-if(cm<=10)
+if(cm<=150)
 {
   myservomotor.write(40);//servo turning right
   delay(3000); //waiting for getting data from the ultrasonic sensor
@@ -71,7 +71,7 @@ if(cm<=10)
   cm = microsecondsToCentimeters(duration);
     
   //decision for right side status
-  if(cm<=10)
+  if(cm<=150)
   {
     Serial.print(cm);
  Serial.print("cm");
@@ -99,14 +99,14 @@ if(cm<=10)
   duration = pulseIn(Echo, HIGH);
   cm = microsecondsToCentimeters(duration); 
   //decision for left side status
-  if(cm<=10)
+  if(cm<=150)
   {
     Serial.print(cm);
  Serial.print("cm");
  Serial.println();
     left_side = 1;
   }
-  if(cm>10)
+  if(cm>150)
   {
     Serial.print(cm);
  Serial.print("cm");
