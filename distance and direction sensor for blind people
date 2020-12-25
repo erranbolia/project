@@ -1,0 +1,188 @@
+#include <Servo.h>
+const int Trigger = 10;
+const int Echo = 11;
+int l_buzzer=7 , r_buzzer=4;
+Servo myservomotor; 
+int right_side,left_side;//0 is clear ,1 is not clear
+void setup() {
+  Serial.begin(9600);
+  pinMode(r_buzzer, OUTPUT);
+  pinMode(l_buzzer, OUTPUT);
+  myservomotor.attach(8);  
+  myservomotor.write(113);  
+}
+
+void loop()
+{
+  int i=0;
+  long duration, cm;
+  pinMode(Trigger, OUTPUT);
+  digitalWrite(Trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trigger, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(Trigger, LOW);
+  pinMode(Echo, INPUT);
+  duration = pulseIn(Echo, HIGH);
+  cm = microsecondsToCentimeters(duration);
+
+
+ while(cm>10)
+ {
+  pinMode(Trigger, OUTPUT);
+  digitalWrite(Trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trigger, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(Trigger, LOW);
+  pinMode(Echo, INPUT);
+  duration = pulseIn(Echo, HIGH);
+  cm = microsecondsToCentimeters(duration);
+  Serial.print(cm);
+ Serial.print("cm");
+ Serial.println();
+
+ }
+
+ for(i=0;i<=1;i++)
+  {
+    digitalWrite(l_buzzer,HIGH); 
+    digitalWrite(r_buzzer,HIGH);  
+    delay(500);
+    digitalWrite(l_buzzer,LOW);
+    digitalWrite(r_buzzer,LOW);
+    i++;
+    
+  }
+  
+
+if(cm<=10)
+{
+  myservomotor.write(40);//servo turning right
+  delay(3000); //waiting for getting data from the ultrasonic sensor
+  pinMode(Trigger, OUTPUT);
+  digitalWrite(Trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trigger, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(Trigger, LOW);
+  pinMode(Echo, INPUT);
+  duration = pulseIn(Echo, HIGH);
+  cm = microsecondsToCentimeters(duration);
+    
+  //decision for right side status
+  if(cm<=10)
+  {
+    Serial.print(cm);
+ Serial.print("cm");
+ Serial.println();
+    right_side = 1;
+  }
+  else
+  {
+    Serial.print(cm);
+ Serial.print("cm");
+ Serial.println();
+    right_side = 0;
+  }
+  
+  myservomotor.write(180);//servo turning left
+  delay(3000);  //waiting for getting data from the ultrasonic sensor
+   
+  pinMode(Trigger, OUTPUT);
+  digitalWrite(Trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trigger, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(Trigger, LOW);
+  pinMode(Echo, INPUT);
+  duration = pulseIn(Echo, HIGH);
+  cm = microsecondsToCentimeters(duration); 
+  //decision for left side status
+  if(cm<=10)
+  {
+    Serial.print(cm);
+ Serial.print("cm");
+ Serial.println();
+    left_side = 1;
+  }
+  if(cm>10)
+  {
+    Serial.print(cm);
+ Serial.print("cm");
+ Serial.println();
+    left_side = 0;
+  }
+  
+}
+
+  Serial.print("right=");
+  Serial.println(right_side);
+  Serial.print("left=");
+  Serial.println(left_side);
+ 
+ 
+//controlling buzzer according to the state of the sides
+if(left_side == 0 || right_side == 0)
+{
+  if(right_side == 0)
+  {
+    if(left_side == 0 && right_side == 0)
+    {
+      noTone(l_buzzer);
+      noTone(r_buzzer);
+    }
+    else
+    {
+      for(i=0;i<=7;i++)
+  {
+    digitalWrite(l_buzzer,HIGH);   
+    delay(500);
+    digitalWrite(l_buzzer,LOW);  
+  }
+    }
+    
+  }
+  else
+  {
+    for(i=0;i<=7;i++)
+  {
+    digitalWrite(r_buzzer,HIGH);  
+    delay(500);
+    digitalWrite(r_buzzer,LOW);
+    
+  } 
+  }
+  
+}
+else
+{
+  for(i=0;i<=14;i++)
+  {
+    digitalWrite(l_buzzer,HIGH); 
+    digitalWrite(r_buzzer,HIGH);  
+    delay(500);
+    digitalWrite(l_buzzer,LOW);
+    digitalWrite(r_buzzer,LOW);
+    i++;
+    
+  }
+ 
+}
+
+
+ myservomotor.write(113);
+ delay(3000);
+ 
+
+  
+
+  
+ 
+  
+}
+
+long microsecondsToCentimeters(long microseconds)
+{
+  return microseconds / 29 / 2;
+}
